@@ -55,11 +55,11 @@ interface tokenRecipient { function receiveApproval(address _from, uint256 _valu
 contract TokenERC20 is owned{
     using SafeMath for uint256;
     // Public variables of the token
-    string public name = "Supercommunity";
-    string public symbol = 'PER';
+    string public name;
+    string public symbol;
     uint8 public decimals = 18;
     // 18 decimals is the strongly suggested default, avoid changing it
-    uint256 public totalSupply = 1000000000000000000000000000000;
+    uint256 public totalSupply;
     bool public released = true;
     // This creates an array with all balances
     mapping (address => uint256) public balanceOf;
@@ -76,9 +76,9 @@ contract TokenERC20 is owned{
         string tokenSymbol
     ) public {
         totalSupply = initialSupply * 10 ** uint256(decimals); // Update total supply with the decimal amount
-        balanceOf[msg.sender] = 0; // Give the creator all initial tokens
-        name = "Supercommunity"; // Set the name for display purposes
-        symbol = "PER"; // Set the symbol for display purposes
+        balanceOf[msg.sender] = totalSupply; // Give the creator all initial tokens
+        name = tokenName; // Set the name for display purposes
+        symbol = tokenSymbol; // Set the symbol for display purposes
     }
     function release() public onlyOwner{
         require (owner == msg.sender);
@@ -209,17 +209,6 @@ contract PER is owned, TokenERC20 {
         balanceOf[_from] = balanceOf[_from].sub(_value); // Subtract from the sender
         balanceOf[_to] = balanceOf[_to].add(_value); // Add the same to the recipient
         emit Transfer(_from, _to, _value);
-    }
-    /// @notice Create `mintedAmount` tokens and send it to `target`
-    /// @param target Address to receive the tokens
-    /// @param mintedAmount the amount of tokens it will receive
-    /// mintedAmount 1000000000000000000 = 1.000000000000000000
-    function mintToken(address target, uint256 mintedAmount) onlyOwner public {
-        require (mintedAmount > 0);
-        totalSupply = totalSupply.add(mintedAmount);
-        balanceOf[target] = balanceOf[target].add(mintedAmount);
-        emit Transfer(0, this, mintedAmount);
-        emit Transfer(this, target, mintedAmount);
     }
     /// @notice `freeze? Prevent | Allow` `target` from sending & receiving tokens
     /// @param target Address to be frozen
